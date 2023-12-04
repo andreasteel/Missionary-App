@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relaxing Coloring</title>
+    <style>
+      canvas {
+        border: 1px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Relaxing Coloring</h2>
+    <p>Click and drag on the canvas to draw. Select a color below:</p>
+    <input type="color" id="colorPicker" value="#000000" />
+    <canvas id="drawingCanvas" width="800" height="400"></canvas>
+
+    <script>
+      const canvas = document.getElementById("drawingCanvas");
+      const context = canvas.getContext("2d");
+      let isDrawing = false;
+      let currentColor = "#000000";
+
+      canvas.addEventListener("mousedown", startDrawing);
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mouseup", stopDrawing);
+      canvas.addEventListener("mouseout", stopDrawing);
+
+      document
+        .getElementById("colorPicker")
+        .addEventListener("input", updateColor);
+
+      function startDrawing(e) {
+        isDrawing = true;
+        draw(e); // To start drawing immediately at the click point
+      }
+
+      function draw(e) {
+        if (!isDrawing) return;
+
+        context.lineWidth = 5;
+        context.lineCap = "round";
+        context.strokeStyle = currentColor;
+
+        context.lineTo(
+          e.clientX - canvas.offsetLeft,
+          e.clientY - canvas.offsetTop
+        );
+        context.stroke();
+        context.beginPath();
+        context.moveTo(
+          e.clientX - canvas.offsetLeft,
+          e.clientY - canvas.offsetTop
+        );
+      }
+
+      function stopDrawing() {
+        isDrawing = false;
+        context.beginPath();
+      }
+
+      function updateColor(e) {
+        currentColor = e.target.value;
+      }
+    </script>
+  </body>
+</html>
