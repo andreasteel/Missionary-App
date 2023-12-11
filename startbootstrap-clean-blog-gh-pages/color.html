@@ -58,40 +58,26 @@
                 >Info</a
               >
             </li>
-            <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4" href="survey.html"
-                >Survey</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html"
-                >Emergency Contacts</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4" href="color.html"
-                >Coloring Page</a
-              >
-            </li>
+            <!-- ... (Add other navigation items as needed) ... -->
           </ul>
         </div>
       </div>
-    </nav>    
+    </nav>
     <!-- Page Header-->
     <header
-    class="masthead"
-    style="background-image: url('assets/img/home-bg.jpg')"
+      class="masthead"
+      style="background-image: url('assets/img/home-bg.jpg')"
     >
-    <div class="container position-relative px-4 px-lg-5">
-      <div class="row gx-4 gx-lg-5 justify-content-center">
-        <div class="col-md-10 col-lg-8 col-xl-7">
-          <div class="site-heading">
-            <h2>Relaxing Coloring</h2>
-            <!-- <span class="subheading">A Blog Theme by Start Bootstrap</span> -->
+      <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+          <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="site-heading">
+              <h2>Relaxing Coloring</h2>
+              <!-- <span class="subheading">A Blog Theme by Start Bootstrap</span> -->
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </header>
     <!-- Main Content-->
     <div class="container px-4 px-lg-5">
@@ -99,7 +85,15 @@
         <div class="col-md-10 col-lg-8 col-xl-7">
           <p>Click and drag on the canvas to draw. Select a color below:</p>
           <input type="color" id="colorPicker" value="#000000" />
-          <canvas id="drawingCanvas" width="800" height="400"></canvas>      
+
+          <!-- Thickness Slider -->
+          <label for="thicknessSlider">Pen Thickness:</label>
+          <input type="range" id="thicknessSlider" min="1" max="20" value="5" />
+
+          <!-- Eraser Button -->
+          <button id="eraserButton">Eraser</button>
+
+          <canvas id="drawingCanvas" width="800" height="400"></canvas>
         </div>
       </div>
     </div>
@@ -108,35 +102,7 @@
       <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
           <div class="col-md-10 col-lg-8 col-xl-7">
-            <ul class="list-inline text-center">
-              <li class="list-inline-item">
-                <a href="#!">
-                  <span class="fa-stack fa-lg">
-                    <i class="fas fa-circle fa-stack-2x"></i>
-                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li class="list-inline-item">
-                <a href="#!">
-                  <span class="fa-stack fa-lg">
-                    <i class="fas fa-circle fa-stack-2x"></i>
-                    <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li class="list-inline-item">
-                <a href="#!">
-                  <span class="fa-stack fa-lg">
-                    <i class="fas fa-circle fa-stack-2x"></i>
-                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-            </ul>
-            <div class="small text-center text-muted fst-italic">
-              Copyright &copy; Your Website 2023
-            </div>
+            <!-- ... (Add your footer content as needed) ... -->
           </div>
         </div>
       </div>
@@ -144,12 +110,13 @@
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>    
+    <script src="js/scripts.js"></script>
     <script>
       const canvas = document.getElementById("drawingCanvas");
       const context = canvas.getContext("2d");
       let isDrawing = false;
       let currentColor = "#000000";
+      let isErasing = false;
 
       canvas.addEventListener("mousedown", startDrawing);
       canvas.addEventListener("mousemove", draw);
@@ -159,26 +126,30 @@
       document
         .getElementById("colorPicker")
         .addEventListener("input", updateColor);
+      document
+        .getElementById("thicknessSlider")
+        .addEventListener("input", updateThickness);
+      document
+        .getElementById("eraserButton")
+        .addEventListener("click", toggleEraser);
 
       function startDrawing(e) {
         isDrawing = true;
-        draw(e); // To start drawing immediately at the click point
+        draw(e);
       }
 
       function draw(e) {
         if (!isDrawing) return;
 
-        context.lineWidth = 5;
+        context.lineWidth = isErasing ? getThickness() : context.lineWidth;
         context.lineCap = "round";
-        context.strokeStyle = currentColor;
+        context.strokeStyle = isErasing ? "#FFFFFF" : currentColor;
 
-        // Use offsetX and offsetY for getting the mouse coordinates within the canvas
         context.lineTo(e.offsetX, e.offsetY);
         context.stroke();
         context.beginPath();
         context.moveTo(e.offsetX, e.offsetY);
       }
-
 
       function stopDrawing() {
         isDrawing = false;
@@ -187,6 +158,21 @@
 
       function updateColor(e) {
         currentColor = e.target.value;
+      }
+
+      function updateThickness(e) {
+        context.lineWidth = e.target.value;
+      }
+
+      function getThickness() {
+        return document.getElementById("thicknessSlider").value;
+      }
+
+      function toggleEraser() {
+        isErasing = !isErasing;
+        document.getElementById("eraserButton").innerText = isErasing
+          ? "Draw"
+          : "Eraser";
       }
     </script>
   </body>
